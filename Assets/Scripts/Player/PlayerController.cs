@@ -8,10 +8,12 @@ public class PlayerController : MonoBehaviour
     private PlayerInputHandler _playerInputHandler;
     [SerializeField] private Vector3 movement;
     [SerializeField] private float raycastDistance = 5f;
+    public Transform objHolder;
     void Start()
     {
         _playerInputHandler = GetComponent<PlayerInputHandler>();
         _playerInputHandler.onInteract.AddListener(DetectInteractableObject);
+
     }
 
     // Update is called once per frame
@@ -26,9 +28,22 @@ public class PlayerController : MonoBehaviour
         movement = _playerInputHandler._movementInput;
     }
 
+    public int IsHoldingObject()
+    {
+        return objHolder.childCount;
+    }
 
     private void DetectInteractableObject()
     {
+        if (IsHoldingObject() > 0)
+        {
+            Debug.Log("Player holding an object.Releasing it...");
+            objHolder.GetComponentInChildren<PickableBox>().Release();
+            return;
+        }
+        else{
+            
+        }
         RaycastHit hit; 
         Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward,out hit, raycastDistance);
         if(hit.collider != null && hit.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable obj))

@@ -28,7 +28,6 @@ public class MovingPlatform : MonoBehaviour
     {
         if (isMoving)
         {
-            // Move the platform
             if (isMovingToEnd)
             {
                 transform.position = Vector3.MoveTowards(transform.position, endWaypoint.position, platformSpeed * Time.deltaTime);

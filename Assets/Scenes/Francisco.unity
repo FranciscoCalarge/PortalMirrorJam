@@ -2753,6 +2753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {x: 0, y: 0, z: 0}
   raycastDistance: 45
+  objHolder: {fileID: 0}
 --- !u!114 &1283669969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3381,6 +3382,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2251616730055401015, guid: bcef84c975ff66d4c9a36cf87d3cd466, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: b4ab87282aa78d148974e821041c2cd3, type: 3}
     - target: {fileID: 5146549062196307674, guid: bcef84c975ff66d4c9a36cf87d3cd466, type: 3}
       propertyPath: m_LocalPosition.x
       value: 37.76

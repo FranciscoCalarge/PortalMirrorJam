@@ -11,12 +11,15 @@ public class Mirror : MonoBehaviour, IInteractable
 
     private Camera mirrorCamera;
     private RenderTexture _renderTexture;
+    [SerializeField] private Material _material;
 
     private static int instanceCount = 0; // Contador para garantir nomes únicos
     private string renderTexturePath;
 
     void Start()
     {
+        _material = GetComponent<MeshRenderer>().material;
+
         player = FindFirstObjectByType<PlayerController>().gameObject;
 
         mirrorCamera = GetComponentInChildren<Camera>();
@@ -32,14 +35,14 @@ public class Mirror : MonoBehaviour, IInteractable
         CreateAndSaveRenderTexture();
 
         mirrorCamera.targetTexture = _renderTexture;
-
+    
         // Assign the RenderTexture to the prefab's material
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
-            Material material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            material.SetTexture("_BaseMap", _renderTexture); // Assign the RenderTexture to the "_BaseMap" property
-            meshRenderer.material = material;
+            _material.SetTexture("_Texture2D", _renderTexture); // Assign the RenderTexture to the "_BaseMap" property
+            _material.SetFloat("_Flip", 1); // Assign the RenderTexture to the "_BaseMap" property
+            meshRenderer.material = _material;
         }
         else
         {

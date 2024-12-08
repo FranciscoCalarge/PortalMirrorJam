@@ -3430,6 +3430,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MirrorPrefab (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7359546275704346651, guid: bcef84c975ff66d4c9a36cf87d3cd466, type: 3}
+      propertyPath: m_TargetTexture
+      value: 
+      objectReference: {fileID: 8400000, guid: 11fd86542220d024899a0b0750610a26, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4249,6 +4253,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MirrorPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 7359546275704346651, guid: bcef84c975ff66d4c9a36cf87d3cd466, type: 3}
+      propertyPath: m_TargetTexture
+      value: 
+      objectReference: {fileID: 8400000, guid: 6d0edcedbf8608448b9e5703fe7d2ee1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

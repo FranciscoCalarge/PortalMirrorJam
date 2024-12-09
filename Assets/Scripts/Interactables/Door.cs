@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GarageDoor : MonoBehaviour
+public class Door : MonoBehaviour
 {
     public Lever lever;
     public BoxCollider boxCollider;

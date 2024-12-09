@@ -18,10 +18,19 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "875f735b-660c-46dc-a866-955af963b729",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CameraLook",
+                    "type": "Value",
+                    "id": "5b55b32d-f472-42f1-ab78-3b74c06827e1",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -90,6 +99,17 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "a23b5073-f342-4d22-a2c6-b8769cd232d1",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraLook",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

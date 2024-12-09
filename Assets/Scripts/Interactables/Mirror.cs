@@ -13,7 +13,7 @@ public class Mirror : MonoBehaviour, IInteractable
     private RenderTexture _renderTexture;
     [SerializeField] private Material _material;
 
-    private static int instanceCount = 0; // Contador para garantir nomes únicos
+    private static int instanceCount = 0;
     private string renderTexturePath;
 
     void Start()
@@ -36,12 +36,12 @@ public class Mirror : MonoBehaviour, IInteractable
 
         mirrorCamera.targetTexture = _renderTexture;
     
-        // Assign the RenderTexture to the prefab's material
+       
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
-            _material.SetTexture("_Texture2D", _renderTexture); // Assign the RenderTexture to the "_BaseMap" property
-            _material.SetFloat("_Flip", 1); // Assign the RenderTexture to the "_BaseMap" property
+            _material.SetTexture("_Texture2D", _renderTexture); 
+            _material.SetFloat("_Flip", 1); 
             meshRenderer.material = _material;
         }
         else
@@ -52,23 +52,20 @@ public class Mirror : MonoBehaviour, IInteractable
 
     private void CreateAndSaveRenderTexture()
     {
-        // Liberar memória anterior (se necessário)
         if (_renderTexture != null)
         {
             _renderTexture.Release();
             _renderTexture = null;
         }
 
-        // Incrementar contador para nomes únicos
         instanceCount++;
         string uniqueName = $"Mirror_RenderTexture_{instanceCount}";
         renderTexturePath = $"Assets/RenderTextures/{uniqueName}.renderTexture";
 
-        // Criar RenderTexture
+      
         _renderTexture = new RenderTexture(256, 256, 16);
         _renderTexture.name = uniqueName;
 
-        // Salvar RenderTexture como ativo no projeto
         if (!AssetDatabase.IsValidFolder("Assets/RenderTextures"))
         {
             AssetDatabase.CreateFolder("Assets", "RenderTextures");

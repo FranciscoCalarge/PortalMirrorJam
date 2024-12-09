@@ -11,39 +11,49 @@ public class PlayerController : MonoBehaviour
     private Animator _animator;
     private Rigidbody _rb;
 
-    [SerializeField] private CinemachineCamera freeLookCamera;
+    [SerializeField] private Camera firstPersonCamera;
+    [SerializeField] private float lookSensitivity = 2f; 
+    private float _xRotation = 0f;
 
     [SerializeField] private Vector3 movement;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float raycastDistance = 5f;
     [SerializeField] private Canvas interactCanvas;
+    private Vector3 cameraPos;
     public Transform objHolder;
-    public GameObject cameraFollowObj;
+
     void Start()
     {
         _playerInputHandler = GetComponent<PlayerInputHandler>();
         _playerInputHandler.onInteract.AddListener(DetectInteractableObject);
 
         _animator = GetComponentInChildren<Animator>();
-        _animator.SetBool("Idle",true);
+        _animator.SetBool("Idle", true);
 
         _rb = GetComponent<Rigidbody>();
 
         interactCanvas.enabled = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Move();
+        HandleCameraRotation();
 
-        RaycastHit hit; 
-        Physics.Raycast(freeLookCamera.transform.position, freeLookCamera.transform.forward,out hit, raycastDistance);
-        if(hit.collider != null && hit.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable obj))
+        Ray ray = new Ray(firstPersonCamera.transform.position, firstPersonCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
         {
-            Debug.Log(hit.collider);
-            Vector3 hitDirection = hit.point - transform.position;
-            interactCanvas.enabled = true;
+            if (hit.collider != null && hit.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable obj))
+            {
+                Debug.Log(hit.collider);
+                interactCanvas.enabled = true;
+            }
+            else
+            {
+                interactCanvas.enabled = false;
+            }
         }
         else
         {
@@ -54,16 +64,38 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         movement = _playerInputHandler._movementInput;
-        Vector3 moveDirection = new Vector3(movement.x, 0, movement.z).normalized;
-        _rb.linearVelocity = moveDirection * moveSpeed + new Vector3(0, _rb.linearVelocity.y, 0);
-        if(movement.magnitude > 0.01f)
-        {
-            _animator.SetBool("Moving",true);
+        Vector3 moveDirection = transform.right * movement.x + transform.forward * movement.z;
 
+        Vector3 velocity = new Vector3(moveDirection.x * moveSpeed, _rb.linearVelocity.y, moveDirection.z * moveSpeed);
+        _rb.linearVelocity = velocity;
+
+        if (movement.magnitude > 0.01f)
+        {
+            _animator.SetBool("Moving", true);
         }
         else
         {
-            _animator.SetBool("Moving",false);
+            _animator.SetBool("Moving", false);
+        }
+    }
+
+    private void HandleCameraRotation()
+    {
+        // Get mouse delta
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        
+        if (mouseDelta.magnitude > Mathf.Epsilon) // Only process if there's significant movement
+        {
+            float mouseX = mouseDelta.x * lookSensitivity * Time.deltaTime;
+            float mouseY = mouseDelta.y * lookSensitivity * Time.deltaTime;
+
+            // Rotate the player horizontally
+            transform.Rotate(Vector3.up * mouseX);
+
+            // Rotate the camera vertically
+            _xRotation -= mouseY;
+            _xRotation = Mathf.Clamp(_xRotation, -90f, 50f); // Clamp to prevent over-rotation
+            firstPersonCamera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         }
     }
 
@@ -76,32 +108,29 @@ public class PlayerController : MonoBehaviour
     {
         if (IsHoldingObject() > 0)
         {
-            Debug.Log("Player holding an object.Releasing it...");
+            Debug.Log("Player holding an object. Releasing it...");
             objHolder.GetComponentInChildren<PickableBox>().Release();
             return;
         }
-        else{
-            
-        }
-        RaycastHit hit; 
-        Physics.Raycast(freeLookCamera.transform.position, freeLookCamera.transform.forward,out hit, raycastDistance);
-        if(hit.collider != null && hit.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable obj))
+
+        Ray ray = new Ray(firstPersonCamera.transform.position, firstPersonCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
         {
-            Vector3 hitDirection = hit.point - transform.position;
-            obj.Interact(hitDirection);
-            Debug.Log($"Hit object: {hit.collider.gameObject.name}");
+            if (hit.collider != null && hit.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable obj))
+            {
+                Vector3 hitDirection = hit.point - transform.position;
+                obj.Interact(hitDirection);
+                Debug.Log($"Hit object: {hit.collider.gameObject.name}");
+            }
         }
-    }
-
-    private void TeleportPlayer()
-    {
-
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawRay(freeLookCamera.transform.position,Camera.main.transform.forward * raycastDistance);
+        if (firstPersonCamera != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(firstPersonCamera.transform.position, firstPersonCamera.transform.forward * raycastDistance);
+        }
     }
-
 }

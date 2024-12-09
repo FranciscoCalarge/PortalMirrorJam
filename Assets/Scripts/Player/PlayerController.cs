@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(firstPersonCamera.transform.position, firstPersonCamera.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
         {
-            if (hit.collider != null && hit.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable obj))
+            if (hit.collider != null && hit.collider.gameObject.TryGetComponent(out IInteractable obj))
             {
                 Vector3 hitDirection = hit.point - transform.position;
                 obj.Interact(hitDirection);

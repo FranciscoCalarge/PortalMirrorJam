@@ -79,7 +79,7 @@ public class Mirror : MonoBehaviour, IInteractable
 
     public void Interact(Vector3 hitDirection)
     {
-        if (Vector3.Distance(transform.position, player.transform.position) > 5)
+        if (Vector3.Distance(transform.position, player.transform.position) > 5f)
         {
             Vector3 dynamicOffset = -hitDirection.normalized * offset;
             player.transform.position = transform.position + dynamicOffset;

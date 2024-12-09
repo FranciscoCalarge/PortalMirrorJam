@@ -47,6 +47,19 @@ public class MovingPlatform : MonoBehaviour
         }
     }
 
+    public void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.transform.SetParent(transform);
+        }
+    }
+
+    public void OnCollisionExit(Collision collision)
+    {
+        collision.gameObject.transform.SetParent(null);
+    }
+
     private void MovePlatform()
     {
         isMoving = true;

@@ -7,20 +7,22 @@ using Unity.Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
+    public Transform objHolder;
+    [SerializeField] private Camera firstPersonCamera;
+    [SerializeField] private float lookSensitivity = 2f; 
+    [SerializeField] private Vector3 movement;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float raycastDistance = 5f;
+    [SerializeField] private Canvas interactCanvas;
+
     private PlayerInputHandler _playerInputHandler;
     private Animator _animator;
     private Rigidbody _rb;
 
-    [SerializeField] private Camera firstPersonCamera;
-    [SerializeField] private float lookSensitivity = 2f; 
     private float _xRotation = 0f;
 
-    [SerializeField] private Vector3 movement;
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float raycastDistance = 5f;
-    [SerializeField] private Canvas interactCanvas;
-    private Vector3 cameraPos;
-    public Transform objHolder;
+    [SerializeField] private bool _isGrounded;
 
     void Start()
     {
@@ -42,6 +44,11 @@ public class PlayerController : MonoBehaviour
         Move();
         HandleCameraRotation();
 
+        if(_playerInputHandler.didJump && _isGrounded)
+        {
+            Jump();
+        }
+
         Ray ray = new Ray(firstPersonCamera.transform.position, firstPersonCamera.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
         {
@@ -49,10 +56,6 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log(hit.collider);
                 interactCanvas.enabled = true;
-            }
-            else
-            {
-                interactCanvas.enabled = false;
             }
         }
         else
@@ -79,22 +82,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Jump()
+    {
+        _animator.SetTrigger("Jump");
+        _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        _isGrounded = false;
+    }
+
     private void HandleCameraRotation()
     {
-        // Get mouse delta
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
         
-        if (mouseDelta.magnitude > Mathf.Epsilon) // Only process if there's significant movement
+        if (mouseDelta.magnitude > Mathf.Epsilon) 
         {
             float mouseX = mouseDelta.x * lookSensitivity * Time.deltaTime;
             float mouseY = mouseDelta.y * lookSensitivity * Time.deltaTime;
 
-            // Rotate the player horizontally
             transform.Rotate(Vector3.up * mouseX);
 
-            // Rotate the camera vertically
             _xRotation -= mouseY;
-            _xRotation = Mathf.Clamp(_xRotation, -90f, 50f); // Clamp to prevent over-rotation
+            _xRotation = Mathf.Clamp(_xRotation, -90f, 50f);
             firstPersonCamera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         }
     }
@@ -123,6 +130,19 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"Hit object: {hit.collider.gameObject.name}");
             }
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        _isGrounded = false;
     }
 
     private void OnDrawGizmos()

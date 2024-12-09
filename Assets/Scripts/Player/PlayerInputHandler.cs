@@ -9,6 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
     [SerializeField] private PlayerInput _playerInput;
     public Vector3 _movementInput;
     public Vector2 _lookInput;
+    public bool didJump = false;
     public UnityEvent onInteract = new UnityEvent();
 
     public void OnMovementInput(InputAction.CallbackContext context)
@@ -22,6 +23,19 @@ public class PlayerInputHandler : MonoBehaviour
             _movementInput = Vector2.zero;
         }
     } 
+
+    public void OnJumpInput(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            Debug.Log("Jumping");
+            didJump = true;
+        }
+        else
+        {
+            didJump = false;
+        }
+    }
 
     public void OnLookInput(InputAction.CallbackContext context)
     {

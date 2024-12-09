@@ -84,17 +84,17 @@ public class PlayerController : MonoBehaviour
         // Get mouse delta
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
         
-        if (mouseDelta.magnitude > Mathf.Epsilon) // Only process if there's significant movement
+        if (mouseDelta.magnitude > Mathf.Epsilon) 
         {
             float mouseX = mouseDelta.x * lookSensitivity * Time.deltaTime;
             float mouseY = mouseDelta.y * lookSensitivity * Time.deltaTime;
 
-            // Rotate the player horizontally
+
             transform.Rotate(Vector3.up * mouseX);
 
-            // Rotate the camera vertically
+
             _xRotation -= mouseY;
-            _xRotation = Mathf.Clamp(_xRotation, -90f, 50f); // Clamp to prevent over-rotation
+            _xRotation = Mathf.Clamp(_xRotation, -90f, 50f); 
             firstPersonCamera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         }
     }

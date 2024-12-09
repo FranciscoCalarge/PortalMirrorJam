@@ -11,8 +11,11 @@ public class Door : MonoBehaviour
     {
         animator = GetComponentInChildren<Animator>();
 
-        lever.onLeverOn.AddListener(OpenDoor);
-        lever.onLeverOff.AddListener(CloseDoor);
+        if(lever != null)
+        {
+            lever.onLeverOn.AddListener(OpenDoor);
+            lever.onLeverOff.AddListener(CloseDoor);
+        }
     }
 
     private void OpenDoor()
